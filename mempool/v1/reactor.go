@@ -190,6 +190,7 @@ func (memR *Reactor) ReceiveEnvelope(e p2p.Envelope) {
 }
 
 func (memR *Reactor) Receive(chID byte, peer p2p.Peer, msgBytes []byte) {
+	memR.Logger.Error("Receive. - mempool/v1/reactor", "chId", chID, "msg", msgBytes)
 	msg := &protomem.Message{}
 	err := proto.Unmarshal(msgBytes, msg)
 	if err != nil {
