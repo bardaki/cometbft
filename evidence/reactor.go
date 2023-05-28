@@ -75,6 +75,7 @@ func (evR *Reactor) ReceiveEnvelope(e p2p.Envelope) {
 		evR.Switch.StopPeerForError(e.Src, err)
 		return
 	}
+	evR.Logger.Error("Receive - evidence/reactor", "src", e.Src, "chId", e.ChannelID)
 
 	for _, ev := range evis {
 		err := evR.evpool.AddEvidence(ev)
