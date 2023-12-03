@@ -533,6 +533,12 @@ func createMConnection(
 		}
 		p.metrics.PeerReceiveBytesTotal.With(labels...).Add(float64(len(msgBytes)))
 		p.metrics.MessageReceiveBytesTotal.With("message_type", p.mlc.ValueToMetricLabel(msg)).Add(float64(len(msgBytes)))
+		p.Logger.Error(">>>>>>>>>>>>>>>>>>>>>>>> Peer createMConnection <<<<<<<<<<<<<<<<<<<<<<<<<")
+		fmt.Printf("peer.ID(): %v\n", p.ID())
+		fmt.Printf("peer.RemoteIP(): %v\n", p.RemoteIP())
+		fmt.Printf("peer.SocketAddr().IP: %v\n", p.SocketAddr().IP)
+		fmt.Printf("msg: %v\n", msg)
+		p.Logger.Error(">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<")
 		if nr, ok := reactor.(EnvelopeReceiver); ok {
 			nr.ReceiveEnvelope(Envelope{
 				ChannelID: chID,
