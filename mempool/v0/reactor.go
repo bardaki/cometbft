@@ -191,9 +191,14 @@ func (memR *Reactor) ReceiveEnvelope(e p2p.Envelope) {
 }
 
 func (memR *Reactor) Receive(chID byte, peer p2p.Peer, msgBytes []byte) {
-	memR.Logger.Error("Receive. - mempool/v0/reactor", "chId", chID, "msg", msgBytes)
+	memR.Logger.Error(">>>>>>>>>>>>>>>>>>>>>>>> Reactor Receive - mempool/v0/reactor <<<<<<<<<<<<<<<<<<<<<<<<<")
+	fmt.Printf("peer.ID(): %v\n", peer.ID())
+	fmt.Printf("peer.RemoteIP(): %v\n", peer.RemoteIP())
+	fmt.Printf("peer.SocketAddr().IP: %v\n", peer.SocketAddr().IP)
+	memR.Logger.Error(">>>>>>>>>>>>>>>>>>>>>>> -  mempool/v0/reactor <<<<<<<<<<<<<<<<<<<<<<<<<")
 	msg := &protomem.Message{}
 	err := proto.Unmarshal(msgBytes, msg)
+	fmt.Printf("msg: %v\n", msg)
 	if err != nil {
 		panic(err)
 	}

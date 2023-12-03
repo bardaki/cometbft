@@ -94,8 +94,14 @@ func (evR *Reactor) ReceiveEnvelope(e p2p.Envelope) {
 }
 
 func (evR *Reactor) Receive(chID byte, peer p2p.Peer, msgBytes []byte) {
+	evR.Logger.Error(">>>>>>>>>>>>>>>>>>>>>>>> Reactor Receive - evi/reactor <<<<<<<<<<<<<<<<<<<<<<<<<")
+	fmt.Printf("peer.ID(): %v\n", peer.ID())
+	fmt.Printf("peer.RemoteIP(): %v\n", peer.RemoteIP())
+	fmt.Printf("peer.SocketAddr().IP: %v\n", peer.SocketAddr().IP)
+	evR.Logger.Error(">>>>>>>>>>>>>>>>>>>>>>> - evi/reactor <<<<<<<<<<<<<<<<<<<<<<<<<")
 	msg := &cmtproto.EvidenceList{}
 	err := proto.Unmarshal(msgBytes, msg)
+	fmt.Printf("msg: %v\n", msg)
 	if err != nil {
 		panic(err)
 	}
