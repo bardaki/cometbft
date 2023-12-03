@@ -234,11 +234,11 @@ func (bcR *BlockchainReactor) ReceiveEnvelope(e p2p.Envelope) {
 }
 
 func (bcR *BlockchainReactor) Receive(chID byte, peer p2p.Peer, msgBytes []byte) {
-	bcR.Logger.Error(">>>>>>>>>>>>>>>>>>>>>>>> Reactor Receive <<<<<<<<<<<<<<<<<<<<<<<<<")
+	bcR.Logger.Error(">>>>>>>>>>>>>>>>>>>>>>>> Reactor Receive - blockchain/v0/reactor <<<<<<<<<<<<<<<<<<<<<<<<<")
 	fmt.Printf("peer.ID(): %v\n", peer.ID())
 	fmt.Printf("peer.RemoteIP(): %v\n", peer.RemoteIP())
 	fmt.Printf("peer.SocketAddr().IP: %v\n", peer.SocketAddr().IP)
-	bcR.Logger.Error(">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<")
+	bcR.Logger.Error(">>>>>>>>>>>>>>>>>>>>>>> - blockchain/v0/reactor <<<<<<<<<<<<<<<<<<<<<<<<<")
 	msg := &bcproto.Message{}
 	err := proto.Unmarshal(msgBytes, msg)
 	if err != nil {
