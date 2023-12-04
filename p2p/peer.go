@@ -537,7 +537,7 @@ func createMConnection(
 		p.metrics.MessageReceiveBytesTotal.With("message_type", p.mlc.ValueToMetricLabel(msg)).Add(float64(len(msgBytes)))
 
 		if strings.Contains(fmt.Sprintf("%v", msg), "MsgEthereumTx") {
-			fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>> Peer createMConnection <<<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
+			// fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>> Peer createMConnection <<<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
 			// Get the current time
 			currentTime := time.Now()
 
@@ -546,7 +546,7 @@ func createMConnection(
 			timeWithMilliseconds := currentTime.Format("2006-01-02 15:04:05.000")
 
 			// Print the formatted time
-			fmt.Println("Time with milliseconds:", timeWithMilliseconds)
+			// fmt.Println("Time with milliseconds:", timeWithMilliseconds)
 			// Define a regular expression pattern to capture the desired substring
 			re := regexp.MustCompile(`032B0x(.*?)/`)
 
@@ -557,14 +557,14 @@ func createMConnection(
 			if len(match) >= 2 {
 				// The desired substring is in the second capturing group (index 1)
 				desiredSubstring := match[1]
-				fmt.Println("Hash: ", "0x"+desiredSubstring)
+				fmt.Println(">>>>>>  Hash: "+"0x"+desiredSubstring+", Time: "+timeWithMilliseconds+", peer.ID(): %v", p.ID()+", peer.RemoteIP(): %v", p.RemoteIP())
 			} else {
 				fmt.Println("No match found.")
 			}
-			fmt.Printf("peer.ID(): %v\n", p.ID())
-			fmt.Printf("peer.RemoteIP(): %v\n", p.RemoteIP())
-			// fmt.Printf("msg: %v\n", msg)
-			fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
+			// fmt.Printf("peer.ID(): %v\n", p.ID())
+			// fmt.Printf("peer.RemoteIP(): %v\n", p.RemoteIP())
+			// // fmt.Printf("msg: %v\n", msg)
+			// fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
 		}
 		if nr, ok := reactor.(EnvelopeReceiver); ok {
 			nr.ReceiveEnvelope(Envelope{
