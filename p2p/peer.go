@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"reflect"
+	"regexp"
 	"strings"
 	"time"
 
@@ -536,6 +537,20 @@ func createMConnection(
 		p.metrics.MessageReceiveBytesTotal.With("message_type", p.mlc.ValueToMetricLabel(msg)).Add(float64(len(msgBytes)))
 
 		if strings.Contains(fmt.Sprintf("%v", msg), "MsgEthereumTx") {
+			// Define a regular expression pattern to capture the desired substring
+			re := regexp.MustCompile(`032B0x(.*?)/`)
+
+			// Find the match
+			match := re.FindStringSubmatch(fmt.Sprintf("%v", msg))
+
+			// Check if there is a match
+			if len(match) >= 2 {
+				// The desired substring is in the second capturing group (index 1)
+				desiredSubstring := match[1]
+				fmt.Println("Hash: ", "0x"+desiredSubstring)
+			} else {
+				fmt.Println("No match found.")
+			}
 			fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>> Peer createMConnection <<<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
 			fmt.Printf("peer.ID(): %v\n", p.ID())
 			fmt.Printf("peer.RemoteIP(): %v\n", p.RemoteIP())
