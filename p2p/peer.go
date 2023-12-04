@@ -563,6 +563,15 @@ func createMConnection(
 				if !isInMap(stringMap, desiredSubstring) {
 					addToMap(desiredSubstring)
 					fmt.Println(">>>>>>  Hash: "+"0x"+desiredSubstring+", Time: "+timeWithMilliseconds+", peer.ID(): %v", p.ID()+", peer.RemoteIP(): %v", p.RemoteIP())
+					if nr, ok := reactor.(EnvelopeReceiver); ok {
+						nr.ReceiveEnvelope(Envelope{
+							ChannelID: chID,
+							Src:       p,
+							Message:   msg,
+						})
+					} else {
+						reactor.Receive(chID, p, msgBytes)
+					}
 				}
 			} else {
 				fmt.Println("No match found.")
@@ -571,15 +580,16 @@ func createMConnection(
 			// fmt.Printf("peer.RemoteIP(): %v\n", p.RemoteIP())
 			// // fmt.Printf("msg: %v\n", msg)
 			// fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
-		}
-		if nr, ok := reactor.(EnvelopeReceiver); ok {
-			nr.ReceiveEnvelope(Envelope{
-				ChannelID: chID,
-				Src:       p,
-				Message:   msg,
-			})
 		} else {
-			reactor.Receive(chID, p, msgBytes)
+			if nr, ok := reactor.(EnvelopeReceiver); ok {
+				nr.ReceiveEnvelope(Envelope{
+					ChannelID: chID,
+					Src:       p,
+					Message:   msg,
+				})
+			} else {
+				reactor.Receive(chID, p, msgBytes)
+			}
 		}
 	}
 
