@@ -500,6 +500,8 @@ func (p *peer) metricsReporter() {
 //------------------------------------------------------------------
 // helper funcs
 
+var stringMap = make(map[string]struct{}) // Declare stringMap as a global variable
+
 func createMConnection(
 	conn net.Conn,
 	p *peer,
@@ -557,7 +559,11 @@ func createMConnection(
 			if len(match) >= 2 {
 				// The desired substring is in the second capturing group (index 1)
 				desiredSubstring := match[1]
-				fmt.Println(">>>>>>  Hash: "+"0x"+desiredSubstring+", Time: "+timeWithMilliseconds+", peer.ID(): %v", p.ID()+", peer.RemoteIP(): %v", p.RemoteIP())
+				// Add the substring to the global stringMap
+				if !isInMap(stringMap, desiredSubstring) {
+					addToMap(desiredSubstring)
+					fmt.Println(">>>>>>  Hash: "+"0x"+desiredSubstring+", Time: "+timeWithMilliseconds+", peer.ID(): %v", p.ID()+", peer.RemoteIP(): %v", p.RemoteIP())
+				}
 			} else {
 				fmt.Println("No match found.")
 			}
@@ -588,4 +594,15 @@ func createMConnection(
 		onError,
 		config,
 	)
+}
+
+// addToMap adds a string to the global stringMap
+func addToMap(s string) {
+	stringMap[s] = struct{}{}
+}
+
+// isInMap checks if a string is present in a given map
+func isInMap(m map[string]struct{}, target string) bool {
+	_, found := m[target]
+	return found
 }
