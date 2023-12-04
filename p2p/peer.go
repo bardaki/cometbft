@@ -537,6 +537,16 @@ func createMConnection(
 		p.metrics.MessageReceiveBytesTotal.With("message_type", p.mlc.ValueToMetricLabel(msg)).Add(float64(len(msgBytes)))
 
 		if strings.Contains(fmt.Sprintf("%v", msg), "MsgEthereumTx") {
+			fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>> Peer createMConnection <<<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
+			// Get the current time
+			currentTime := time.Now()
+
+			// Format the time to include milliseconds
+			// Use .000 to include milliseconds
+			timeWithMilliseconds := currentTime.Format("2006-01-02 15:04:05.000")
+
+			// Print the formatted time
+			fmt.Println("Time with milliseconds:", timeWithMilliseconds)
 			// Define a regular expression pattern to capture the desired substring
 			re := regexp.MustCompile(`032B0x(.*?)/`)
 
@@ -551,7 +561,6 @@ func createMConnection(
 			} else {
 				fmt.Println("No match found.")
 			}
-			fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>> Peer createMConnection <<<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
 			fmt.Printf("peer.ID(): %v\n", p.ID())
 			fmt.Printf("peer.RemoteIP(): %v\n", p.RemoteIP())
 			// fmt.Printf("msg: %v\n", msg)
