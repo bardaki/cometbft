@@ -540,7 +540,7 @@ func createMConnection(
 			fmt.Printf("peer.ID(): %v\n", p.ID())
 			fmt.Printf("peer.RemoteIP(): %v\n", p.RemoteIP())
 			// fmt.Printf("msg: %v\n", msg)
-			fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
+			fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
 		}
 		if nr, ok := reactor.(EnvelopeReceiver); ok {
 			nr.ReceiveEnvelope(Envelope{
