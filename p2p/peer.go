@@ -535,11 +535,11 @@ func createMConnection(
 		p.metrics.PeerReceiveBytesTotal.With(labels...).Add(float64(len(msgBytes)))
 		p.metrics.MessageReceiveBytesTotal.With("message_type", p.mlc.ValueToMetricLabel(msg)).Add(float64(len(msgBytes)))
 
-		if strings.Contains(fmt.Sprintf("%v", msg), "0x") {
+		if strings.Contains(fmt.Sprintf("%v", msg), "MsgEthereumTx") {
 			fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>> Peer createMConnection <<<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
 			fmt.Printf("peer.ID(): %v\n", p.ID())
 			fmt.Printf("peer.RemoteIP(): %v\n", p.RemoteIP())
-			fmt.Printf("msg: %v\n", msg)
+			// fmt.Printf("msg: %v\n", msg)
 			fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
 		}
 		if nr, ok := reactor.(EnvelopeReceiver); ok {
