@@ -562,7 +562,7 @@ func createMConnection(
 				// The desired substring is in the second capturing group (index 1)
 				desiredSubstring := match[1]
 				// Add the substring to the global stringMap
-				if isInMap(desiredSubstring) {
+				if !isInMap(desiredSubstring) {
 					addToMap(desiredSubstring)
 					fmt.Println("\n>>>>>>  Hash: "+"0x"+desiredSubstring+", Time: "+timeWithMilliseconds+", peer.ID(): %v", p.ID()+", peer.RemoteIP(): %v", p.RemoteIP())
 				}
