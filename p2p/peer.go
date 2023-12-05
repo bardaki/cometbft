@@ -601,14 +601,14 @@ func createMConnection(
 // addToMap adds a string to the global stringMap
 func addToMap(s string) {
 	mapMutex.Lock()
-	stringMap[s] = struct{}{}
 	defer mapMutex.Unlock()
+	stringMap[s] = struct{}{}
 }
 
 // isInMap checks if a string is present in a given map
 func isInMap(target string) bool {
 	mapMutex.Lock()
-	_, found := stringMap[target]
 	defer mapMutex.Unlock()
+	_, found := stringMap[target]
 	return found
 }
