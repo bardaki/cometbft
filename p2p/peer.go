@@ -500,6 +500,7 @@ func (p *peer) metricsReporter() {
 
 //------------------------------------------------------------------
 // helper funcs
+
 var mapMutex sync.Mutex
 var stringMap = make(map[string]struct{}) // Declare stringMap as a global variable
 
@@ -526,62 +527,61 @@ func createMConnection(
 		if err != nil {
 			panic(fmt.Errorf("unmarshaling message: %s into type: %s", err, reflect.TypeOf(mt)))
 		}
-		if !isInMap(msg.String()) {
-			addToMap(msg.String())
-			labels := []string{
-				"peer_id", string(p.ID()),
-				"chID", fmt.Sprintf("%#x", chID),
+		labels := []string{
+			"peer_id", string(p.ID()),
+			"chID", fmt.Sprintf("%#x", chID),
+		}
+		if w, ok := msg.(Unwrapper); ok {
+			msg, err = w.Unwrap()
+			if err != nil {
+				panic(fmt.Errorf("unwrapping message: %s", err))
 			}
-			if w, ok := msg.(Unwrapper); ok {
-				msg, err = w.Unwrap()
-				if err != nil {
-					panic(fmt.Errorf("unwrapping message: %s", err))
+		}
+		p.metrics.PeerReceiveBytesTotal.With(labels...).Add(float64(len(msgBytes)))
+		p.metrics.MessageReceiveBytesTotal.With("message_type", p.mlc.ValueToMetricLabel(msg)).Add(float64(len(msgBytes)))
+
+		if strings.Contains(fmt.Sprintf("%v", msg), "MsgEthereumTx") {
+			// fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>> Peer createMConnection <<<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
+			// Get the current time
+			currentTime := time.Now()
+
+			// Format the time to include milliseconds
+			// Use .000 to include milliseconds
+			timeWithMilliseconds := currentTime.Format("2006-01-02 15:04:05.000")
+
+			// Print the formatted time
+			// fmt.Println("Time with milliseconds:", timeWithMilliseconds)
+			// Define a regular expression pattern to capture the desired substring
+			re := regexp.MustCompile(`032B0x(.*?)/`)
+
+			// Find the match
+			match := re.FindStringSubmatch(fmt.Sprintf("%v", msg))
+
+			// Check if there is a match
+			if len(match) >= 2 {
+				// The desired substring is in the second capturing group (index 1)
+				desiredSubstring := match[1]
+				// Add the substring to the global stringMap
+				if isInMap(desiredSubstring) {
+					addToMap(desiredSubstring)
+					fmt.Println("\n>>>>>>  Hash: "+"0x"+desiredSubstring+", Time: "+timeWithMilliseconds+", peer.ID(): %v", p.ID()+", peer.RemoteIP(): %v", p.RemoteIP())
 				}
-			}
-			p.metrics.PeerReceiveBytesTotal.With(labels...).Add(float64(len(msgBytes)))
-			p.metrics.MessageReceiveBytesTotal.With("message_type", p.mlc.ValueToMetricLabel(msg)).Add(float64(len(msgBytes)))
-
-			if strings.Contains(fmt.Sprintf("%v", msg), "MsgEthereumTx") {
-				// fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>> Peer createMConnection <<<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
-				// Get the current time
-				currentTime := time.Now()
-
-				// Format the time to include milliseconds
-				// Use .000 to include milliseconds
-				timeWithMilliseconds := currentTime.Format("2006-01-02 15:04:05.000")
-
-				// Print the formatted time
-				// fmt.Println("Time with milliseconds:", timeWithMilliseconds)
-				// Define a regular expression pattern to capture the desired substring
-				re := regexp.MustCompile(`032B0x(.*?)/`)
-
-				// Find the match
-				match := re.FindStringSubmatch(fmt.Sprintf("%v", msg))
-
-				// Check if there is a match
-				if len(match) >= 2 {
-					// The desired substring is in the second capturing group (index 1)
-					desiredSubstring := match[1]
-					// Add the substring to the global stringMap
-					fmt.Println(">>>>>>  Hash: "+"0x"+desiredSubstring+", Time: "+timeWithMilliseconds+", peer.ID(): %v", p.ID()+", peer.RemoteIP(): %v", p.RemoteIP())
-				} else {
-					fmt.Println("No match found.")
-				}
-				// fmt.Printf("peer.ID(): %v\n", p.ID())
-				// fmt.Printf("peer.RemoteIP(): %v\n", p.RemoteIP())
-				// // fmt.Printf("msg: %v\n", msg)
-				// fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
-
-			}
-			if nr, ok := reactor.(EnvelopeReceiver); ok {
-				nr.ReceiveEnvelope(Envelope{
-					ChannelID: chID,
-					Src:       p,
-					Message:   msg,
-				})
 			} else {
-				reactor.Receive(chID, p, msgBytes)
+				fmt.Println("No match found.")
 			}
+			// fmt.Printf("peer.ID(): %v\n", p.ID())
+			// fmt.Printf("peer.RemoteIP(): %v\n", p.RemoteIP())
+			// // fmt.Printf("msg: %v\n", msg)
+			// fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<  %v\n", p.ID())
+		}
+		if nr, ok := reactor.(EnvelopeReceiver); ok {
+			nr.ReceiveEnvelope(Envelope{
+				ChannelID: chID,
+				Src:       p,
+				Message:   msg,
+			})
+		} else {
+			reactor.Receive(chID, p, msgBytes)
 		}
 	}
 
@@ -601,14 +601,14 @@ func createMConnection(
 // addToMap adds a string to the global stringMap
 func addToMap(s string) {
 	mapMutex.Lock()
-	defer mapMutex.Unlock()
 	stringMap[s] = struct{}{}
+	defer mapMutex.Unlock()
 }
 
 // isInMap checks if a string is present in a given map
 func isInMap(target string) bool {
 	mapMutex.Lock()
-	defer mapMutex.Unlock()
 	_, found := stringMap[target]
+	defer mapMutex.Unlock()
 	return found
 }
