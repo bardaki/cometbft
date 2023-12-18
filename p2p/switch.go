@@ -270,8 +270,11 @@ func (sw *Switch) OnStop() {
 //
 // NOTE: BroadcastEnvelope uses goroutines, so order of broadcast may not be preserved.
 func (sw *Switch) BroadcastEnvelope(e Envelope) chan bool {
-	fmt.Printf("\nSWITCH BroadcastEnvelope e.Src.IsOutbound(): %v\n", e.Src.IsOutbound())
-	fmt.Printf("\nSWITCH BroadcastEnvelope e.Src.RemoteIP(): %v\n", e.Src.RemoteIP())
+	fmt.Printf("\nSWITCH BroadcastEnvelope")
+	if e.Src != nil {
+		fmt.Printf("\nSWITCH BroadcastEnvelope e.Src.IsOutbound(): %v\n", e.Src.IsOutbound())
+		fmt.Printf("\nSWITCH BroadcastEnvelope e.Src.RemoteIP(): %v\n", e.Src.RemoteIP())
+	}
 	sw.Logger.Debug("Broadcast", "channel", e.ChannelID)
 
 	peers := sw.peers.List()
@@ -309,6 +312,7 @@ func (sw *Switch) BroadcastEnvelope(e Envelope) chan bool {
 // Deprecated: code looking to broadcast data to all peers should use BroadcastEnvelope.
 // Broadcast will be removed in 0.37.
 func (sw *Switch) Broadcast(chID byte, msgBytes []byte) chan bool {
+	fmt.Printf("\nSWITCH Broadcast")
 	fmt.Printf("\nSWITCH Broadcast chID: %v\n", chID)
 	sw.Logger.Debug("Broadcast", "channel", chID)
 
