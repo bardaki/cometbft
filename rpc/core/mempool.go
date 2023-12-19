@@ -32,6 +32,8 @@ func BroadcastTxAsync(ctx *rpctypes.Context, tx types.Tx) (*ctypes.ResultBroadca
 // DeliverTx result.
 // More: https://docs.cometbft.com/v0.34/rpc/#/Tx/broadcast_tx_sync
 func BroadcastTxSync(ctx *rpctypes.Context, tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
+	fmt.Printf("\n++++++++++   COMEBFT rpc/core/mempool.go BroadcastTxSync   ++++++++++")
+	now := time.Now()
 	resCh := make(chan *abci.Response, 1)
 	err := env.Mempool.CheckTx(tx, func(res *abci.Response) {
 		select {
@@ -44,11 +46,16 @@ func BroadcastTxSync(ctx *rpctypes.Context, tx types.Tx) (*ctypes.ResultBroadcas
 		return nil, err
 	}
 
+	elapsedTime := time.Since(now)
+	fmt.Printf("\n ======================== COMEBFT rpc/core/mempool.go BroadcastTxSyn time: %v\n", elapsedTime)
+
 	select {
 	case <-ctx.Context().Done():
 		return nil, fmt.Errorf("broadcast confirmation not received: %w", ctx.Context().Err())
 	case res := <-resCh:
 		r := res.GetCheckTx()
+		elapsedTime2 := time.Since(now)
+		fmt.Printf("\n ======================== COMEBFT rpc/core/mempool.go BroadcastTxSyn time2: %v\n", elapsedTime2)
 		return &ctypes.ResultBroadcastTx{
 			Code:      r.Code,
 			Data:      r.Data,

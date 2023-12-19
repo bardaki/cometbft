@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -276,6 +277,7 @@ func (c *baseRPCClient) broadcastTX(
 	route string,
 	tx types.Tx,
 ) (*ctypes.ResultBroadcastTx, error) {
+	fmt.Printf("\n++++++++++   COMEBFT http.go broadcastTX   ++++++++++")
 	result := new(ctypes.ResultBroadcastTx)
 	_, err := c.caller.Call(ctx, route, map[string]interface{}{"tx": tx}, result)
 	if err != nil {
