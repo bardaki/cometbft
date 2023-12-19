@@ -191,14 +191,9 @@ func (memR *Reactor) ReceiveEnvelope(e p2p.Envelope) {
 }
 
 func (memR *Reactor) Receive(chID byte, peer p2p.Peer, msgBytes []byte) {
-	memR.Logger.Error(">>>>>>>>>>>>>>>>>>>>>>>> Reactor Receive - mempool/v0/reactor <<<<<<<<<<<<<<<<<<<<<<<<<")
-	fmt.Printf("peer.ID(): %v\n", peer.ID())
-	fmt.Printf("peer.RemoteIP(): %v\n", peer.RemoteIP())
-	fmt.Printf("peer.SocketAddr().IP: %v\n", peer.SocketAddr().IP)
-	memR.Logger.Error(">>>>>>>>>>>>>>>>>>>>>>> -  mempool/v0/reactor <<<<<<<<<<<<<<<<<<<<<<<<<")
+	memR.Logger.Error("Receive. - mempool/v0/reactor", "chId", chID, "msg", msgBytes)
 	msg := &protomem.Message{}
 	err := proto.Unmarshal(msgBytes, msg)
-	fmt.Printf("msg: %v\n", msg)
 	if err != nil {
 		panic(err)
 	}
@@ -267,6 +262,7 @@ func (memR *Reactor) broadcastTxRoutine(peer p2p.Peer) {
 		// https://github.com/tendermint/tendermint/issues/5796
 
 		if _, ok := memTx.senders.Load(peerID); !ok {
+			fmt.Printf("Broadcasted transaction to peer %s. Transaction data: %s\n", peer.ID(), string(memTx.tx))
 			success := p2p.SendEnvelopeShim(peer, p2p.Envelope{ //nolint: staticcheck
 				ChannelID: mempool.MempoolChannel,
 				Message:   &protomem.Txs{Txs: [][]byte{memTx.tx}},
