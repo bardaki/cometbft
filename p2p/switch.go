@@ -270,8 +270,8 @@ func (sw *Switch) OnStop() {
 //
 // NOTE: BroadcastEnvelope uses goroutines, so order of broadcast may not be preserved.
 func (sw *Switch) BroadcastEnvelope(e Envelope) chan bool {
-	fmt.Printf("\nSWITCH BroadcastEnvelope e.Src.IsOutbound(): %v\n", e.Src.IsOutbound())
-	fmt.Printf("\nSWITCH BroadcastEnvelope e.Src.RemoteIP(): %v\n", e.Src.RemoteIP())
+	// fmt.Printf("\nSWITCH BroadcastEnvelope e.Src.IsOutbound(): %v\n", e.Src.IsOutbound())
+	// fmt.Printf("\nSWITCH BroadcastEnvelope e.Src.RemoteIP(): %v\n", e.Src.RemoteIP())
 	sw.Logger.Debug("Broadcast", "channel", e.ChannelID)
 
 	peers := sw.peers.List()
@@ -279,7 +279,7 @@ func (sw *Switch) BroadcastEnvelope(e Envelope) chan bool {
 	wg.Add(len(peers))
 	successChan := make(chan bool, len(peers))
 
-	currentTime := time.Now()
+	// currentTime := time.Now()
 	for _, peer := range peers {
 		go func(p Peer) {
 			defer wg.Done()
@@ -287,8 +287,8 @@ func (sw *Switch) BroadcastEnvelope(e Envelope) chan bool {
 			successChan <- success
 		}(peer)
 	}
-	elapsedTime := time.Since(currentTime)
-	fmt.Printf("\n ======================== COMEBFT SWITCH BroadcastEnvelope time: %v\n", elapsedTime)
+	// elapsedTime := time.Since(currentTime)
+	// fmt.Printf("\n ======================== COMEBFT SWITCH BroadcastEnvelope time: %v\n", elapsedTime)
 
 	go func() {
 		wg.Wait()
@@ -309,7 +309,7 @@ func (sw *Switch) BroadcastEnvelope(e Envelope) chan bool {
 // Deprecated: code looking to broadcast data to all peers should use BroadcastEnvelope.
 // Broadcast will be removed in 0.37.
 func (sw *Switch) Broadcast(chID byte, msgBytes []byte) chan bool {
-	fmt.Printf("\nSWITCH Broadcast chID: %v\n", chID)
+	// fmt.Printf("\nSWITCH Broadcast chID: %v\n", chID)
 	sw.Logger.Debug("Broadcast", "channel", chID)
 
 	peers := sw.peers.List()
@@ -317,7 +317,7 @@ func (sw *Switch) Broadcast(chID byte, msgBytes []byte) chan bool {
 	wg.Add(len(peers))
 	successChan := make(chan bool, len(peers))
 
-	currentTime := time.Now()
+	// currentTime := time.Now()
 	for _, peer := range peers {
 		go func(p Peer) {
 			defer wg.Done()
@@ -325,8 +325,8 @@ func (sw *Switch) Broadcast(chID byte, msgBytes []byte) chan bool {
 			successChan <- success
 		}(peer)
 	}
-	elapsedTime := time.Since(currentTime)
-	fmt.Printf("\n ======================== COMEBFT SWITCH BroadcastEnvelope time: %v\n", elapsedTime)
+	// elapsedTime := time.Since(currentTime)
+	// fmt.Printf("\n ======================== COMEBFT SWITCH BroadcastEnvelope time: %v\n", elapsedTime)
 
 	go func() {
 		wg.Wait()
